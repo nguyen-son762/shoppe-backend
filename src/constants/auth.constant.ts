@@ -1,0 +1,3 @@
+export const SALT_ROUNDS = 10;
+export const TIME_EXPIRED_ACCESS_TOKEN_HOURS = 2;
+export const TIME_EXPIRED_REFRESH_TOKEN_HOURS = 30 * 24;
