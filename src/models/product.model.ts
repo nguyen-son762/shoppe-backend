@@ -11,6 +11,7 @@ interface ModelDef {
 interface TierVariation {
   name: string;
   options: string[];
+  images: string[];
 }
 
 interface ItemRating {
@@ -18,16 +19,16 @@ interface ItemRating {
   rating_star: number;
 }
 
-interface VideoInfo {
-  _id?: Types.ObjectId;
-  thumb_url: string;
-}
+// interface VideoInfo {
+//   _id?: Types.ObjectId;
+//   thumb_url: string;
+// }
 
 interface ProductDef {
   _id?: Types.ObjectId;
-  category_id: Types.ObjectId;
+  category: Types.ObjectId;
   name: string;
-  price: string;
+  price: number;
   images: string[];
   description: string;
   thumb_url: string;
@@ -38,16 +39,15 @@ interface ProductDef {
   price_min: number;
   price_min_before_discount: number;
   raw_discount: number;
-  shop_location: string;
   tier_variations: TierVariation[];
   item_rating: ItemRating;
-  video_info_list: VideoInfo[];
+  // video_info_list: VideoInfo[];
 }
 
 const productSchema = new Schema<ProductDef>({
-  category_id: {
+  category: {
     type: Schema.Types.ObjectId,
-    default: "",
+    ref: "Category",
   },
   name: {
     type: String,
@@ -55,8 +55,8 @@ const productSchema = new Schema<ProductDef>({
     index: true,
   },
   price: {
-    type: String,
-    default: "",
+    type: Number,
+    default: 0,
   },
   thumb_url: {
     type: String,
@@ -75,9 +75,12 @@ const productSchema = new Schema<ProductDef>({
     {
       _id: {
         type: Schema.Types.ObjectId,
+        required: true,
+        auto: true,
       },
       name: {
         type: String,
+        index: true,
         default: "",
       },
       price: {
@@ -119,10 +122,6 @@ const productSchema = new Schema<ProductDef>({
     type: Number,
     default: 0,
   },
-  shop_location: {
-    type: String,
-    default: "",
-  },
   tier_variations: [
     {
       name: {
@@ -134,28 +133,31 @@ const productSchema = new Schema<ProductDef>({
           type: String,
         },
       ],
-    },
-  ],
-  item_rating: [
-    {
-      rating_count: [
+      images: [
         {
-          type: Number,
+          type: String,
         },
       ],
-      rating_star: {
+    },
+  ],
+  item_rating: {
+    rating_count: [
+      {
         type: Number,
       },
+    ],
+    rating_star: {
+      type: Number,
     },
-  ],
-  video_info_list: [
-    {
-      _id: Schema.Types.ObjectId,
-      thumb_url: {
-        type: String,
-      },
-    },
-  ],
+  },
+// video_info_list: [
+  //   {
+  //     _id: Schema.Types.ObjectId,
+  //     thumb_url: {
+  //       type: String,
+  //     },
+  //   },
+  // ],
 });
 
 productSchema.index({ name: "text" });

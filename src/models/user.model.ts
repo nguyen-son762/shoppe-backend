@@ -13,7 +13,7 @@ export interface UserDef {
   username?: string;
   first_name?: string;
   last_name?: string;
-  email: string;
+  email?: string;
   password: string;
   avatar_url?: string;
   phone_number?: string;
@@ -32,12 +32,10 @@ const userSchema = new Schema<UserDef>({
   username: { type: String, default: "" },
   first_name: {
     type: String,
-    required: true,
     default: "",
   },
   last_name: {
     type: String,
-    required: true,
     default: "",
   },
   email: { type: String, default: "" },
@@ -84,7 +82,8 @@ const userSchema = new Schema<UserDef>({
   },
   otp: {
     type: String,
-    default: "",
+    default: "PENDING",
+    expires: "5m",
   },
   active: {
     type: Boolean,

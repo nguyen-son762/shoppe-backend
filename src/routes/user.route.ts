@@ -20,6 +20,12 @@ userRoutes.post(
   UsersController.register
 );
 
+userRoutes.post(
+  authEndpoints.REGISTER_BY_PHONE_NUMBER,
+  validateRequestSchema,
+  UsersController.registerByPhonenumber
+);
+
 userRoutes.patch(authEndpoints.UPDATE, uploadImage, UsersController.update);
 
 userRoutes.post(authEndpoints.VERIFY, UsersController.verifyOTP);

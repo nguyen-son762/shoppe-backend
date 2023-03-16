@@ -35,7 +35,7 @@ export class UserService {
 
   static async login(user: UserDef) {
     const userDb = await UserModel.findOne({
-      email: user.email,
+      phone_number: user.phone_number,
     });
     if (!userDb) {
       throw new HttpException(HttpStatus.BAD_REQUEST, ERROR_MSG.USER_NOT_FOUND);

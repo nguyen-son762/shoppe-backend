@@ -25,6 +25,12 @@ export class UsersController {
         lowerCaseAlphabets: false,
         upperCaseAlphabets: false,
       });
+      const verifyUser = await UserModel.find({ phone_number });
+      if (verifyUser) {
+        return res.status(HttpStatus.FOUND).json({
+          msg: "User is existed",
+        });
+      }
       // await sendSMS(phone_number, `Your Shopee Fake verification code: ${otp}`);
       const newUser = await UserService.register({
         username,
@@ -47,10 +53,50 @@ export class UsersController {
     }
   }
 
+  static async registerByPhonenumber(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { phone_number, password, first_name, last_name }: UserDef = req.body;
+      const otp = otpGenerator.generate(4, {
+        specialChars: false,
+        lowerCaseAlphabets: false,
+        upperCaseAlphabets: false,
+      });
+      const verifyUser = await UserModel.findOne({ phone_number });
+      if (verifyUser) {
+        return res.status(HttpStatus.FOUND).json({
+          msg: "User is existed",
+        });
+      }
+      const newUser = await UserService.register({
+        first_name,
+        last_name,
+        phone_number,
+        password,
+        otp,
+        active: false,
+      });
+      const result: UserResponseDef = {
+        data: newUser,
+        access_token: getToken(newUser),
+        refresh_token: newUser.refresh_token,
+      };
+      // await sendSMS(phone_number, `Your Shopee Fake verification code: ${otp}`);
+      res.status(HttpStatus.OK).json(result);
+    } catch (err) {
+      console.warn("err", err);
+      return throwError(next, err?.status, err?.message);
+    }
+  }
+
   static async login(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, password }: UserDef = req.body;
-      const user = await UserService.login({ email, password });
+      const { phone_number, password }: UserDef = req.body;
+      const user = await UserService.login({ phone_number, password });
+      if (!user || !user.active) {
+        return res.status(HttpStatus.BAD_REQUEST).json({
+          msg: "User is not found",
+        });
+      }
       const pwdDecoded = decodeToken(user.refresh_token);
       let refresh_token = user.refresh_token;
       let userNeedUpdated: UserDocument;
@@ -130,11 +176,16 @@ export class UsersController {
       if (user && user.otp === otp) {
         user.active = true;
         await user.save();
+        return res.status(HttpStatus.OK).json({
+          data: user,
+          access_token: getToken(user),
+        });
       }
-      return res.status(HttpStatus.OK).json({
-        message: "Success",
+      return res.status(HttpStatus.BAD_GATEWAY).json({
+        message: "Fail",
       });
     } catch (err) {
+      console.warn("err", err);
       return throwError(next, err?.status || err?.http_code, err?.message);
     }
   }

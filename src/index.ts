@@ -1,4 +1,5 @@
 import * as dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import cookieParser from "cookie-parser";
 import swaggerUi from "swagger-ui-express";
@@ -11,10 +12,8 @@ import { connectDB } from "@config/db";
 import errorMiddleware from "@app/middleware/error.middleware";
 
 import * as routes from "@app/routes";
-import { authEndpoints, productEndpoints } from "./constants/route.constant";
+import { authEndpoints, orderEndpoints, productEndpoints } from "./constants/route.constant";
 import { client } from "./config/redis";
-
-dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -54,6 +53,7 @@ app.get("/api-docs", swaggerUi.setup(swaggerDocument));
 // routes
 app.use(authEndpoints.AUTH, routes.userRoutes);
 app.use(productEndpoints.PRODUCT, routes.productRoutes);
+app.use(orderEndpoints.ORDER, routes.orderRoutes);
 
 app.use(errorMiddleware);
 app.listen(port, () => {

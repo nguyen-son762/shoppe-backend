@@ -12,7 +12,7 @@ const categorySchema = new Schema<CategoryDef>({
   },
 });
 
-export const UserModel = model<CategoryDef>("Category", categorySchema);
+export const CategoryModel = model<CategoryDef>("Category", categorySchema);
 
 export type CategoryDocument = Document<unknown, any, CategoryDef> &
   CategoryDef & {
