@@ -13,27 +13,29 @@ export interface OrderDef {
   user?: Types.ObjectId;
   _id?: Types.ObjectId;
   product: Types.ObjectId;
-  model: Types.ObjectId;
+  model: string;
   phonenumber?: string;
   address?: string;
   promotion_code?: string;
   note?: string;
   status?: OrderStatusEnums;
+  amount: number;
 }
 
 const OrderSchema = new Schema<OrderDef>({
   user: {
     type: Schema.Types.ObjectId,
     ref: "User",
-    default: "",
+    default: null,
+    required: false,
   },
   product: {
     type: Schema.Types.ObjectId,
     ref: "Product",
   },
   model: {
-    type: Schema.Types.ObjectId,
-    ref: "Model",
+    type: String,
+    default: "",
   },
   phonenumber: {
     type: String,
@@ -56,6 +58,10 @@ const OrderSchema = new Schema<OrderDef>({
     enum: OrderStatusEnums,
     required: true,
     default: OrderStatusEnums.INCART,
+  },
+  amount: {
+    type: Number,
+    default: 1,
   },
 });
 

@@ -8,6 +8,8 @@ interface GetProductsParams {
   page: number;
   limit: number;
   keyword: string;
+  category: string;
+  sort?: string;
 }
 
 interface GetProduuctsResponse {
@@ -24,23 +26,52 @@ export class ProductController {
     next: NextFunction
   ): Promise<void | Response<GetProduuctsResponse>> {
     try {
-      const { page = 1, limit = 10, keyword = "" }: GetProductsParams = req.query as any;
-
-      const products = await ProductModel.find({
-        name: new RegExp(keyword),
-      }).populate({
-        path:'category',
-        model: CategoryModel
-      })
-        .skip((page - 1) * limit)
-        .limit(limit);
-      const total = await ProductModel.countDocuments({
-        name: new RegExp(keyword),
-      });
+      const {
+        page = 1,
+        limit = 10,
+        keyword = "",
+        category,
+        sort = "",
+      }: GetProductsParams = req.query as any;
+      let querySearch = {};
+      if (keyword) {
+        querySearch = {
+          ...querySearch,
+          name: new RegExp(keyword.toLowerCase()),
+        };
+      }
+      if (category) {
+        querySearch = {
+          ...querySearch,
+          category,
+        };
+      }
+      let products;
+      if (sort) {
+        products = await ProductModel.find(querySearch)
+          .populate({
+            path: "category",
+            model: CategoryModel,
+          })
+          .sort({
+            price: sort === "asc" ? 1 : -1,
+          })
+          .skip((page - 1) * limit)
+          .limit(limit);
+      } else {
+        products = await ProductModel.find(querySearch)
+          .populate({
+            path: "category",
+            model: CategoryModel,
+          })
+          .skip((page - 1) * limit)
+          .limit(limit);
+      }
+      const total = await ProductModel.countDocuments(querySearch);
 
       return res.status(HttpStatus.OK).json({
         data: products,
-        page,
+        page: Number(page),
         limit: Number(limit),
         totalPage: Math.ceil(total / limit),
       });
@@ -58,5 +89,21 @@ export class ProductController {
       .catch(err => {
         return throwError(next, err?.status, err?.message);
       });
+  }
+
+  static async getRecommendedProducts(req: Request, res: Response, next: NextFunction) {
+    try {
+      const products = await ProductModel.find({
+        name: {
+          $regex: `${req.query.name}`,
+          $options: "i",
+        },
+      });
+      return res.json({
+        data: products,
+      });
+    } catch (err) {
+      return throwError(next, err?.status, err?.message);
+    }
   }
 }

@@ -2,6 +2,7 @@ import * as dotenv from "dotenv";
 dotenv.config();
 import express from "express";
 import cookieParser from "cookie-parser";
+import bodyParser from "body-parser";
 import swaggerUi from "swagger-ui-express";
 import swaggerDocument from "./swagger.json";
 import cloudinary from "cloudinary";
@@ -18,7 +19,17 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 app.use(cookieParser());
-app.use(express.json());
+app.use(
+  express.json({
+    limit: "100mb",
+  })
+);
+app.use(
+  express.urlencoded({
+    limit: "100mb",
+    extended: true,
+  })
+);
 app.use(
   compression({
     level: 6,

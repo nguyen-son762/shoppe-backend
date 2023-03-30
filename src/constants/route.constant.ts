@@ -14,11 +14,12 @@ export const productEndpoints = {
   PRODUCT: `${ROOT_ENDPOINT}/product`,
   CREATE: "/create",
   GET: "/",
+  RECOMMEND: "/recommend",
 };
 
 export const orderEndpoints = {
   ORDER: `${ROOT_ENDPOINT}/order`,
-  GET: '/:user_id',
+  GET: "/:user_id",
   CREATE: "/create",
   PURCHASE: "/purchase",
 };

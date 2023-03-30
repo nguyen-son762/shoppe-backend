@@ -6,4 +6,6 @@ export const productRoutes = express.Router();
 
 productRoutes.get(productEndpoints.GET, ProductController.getProducts);
 
+productRoutes.get(productEndpoints.RECOMMEND, ProductController.getRecommendedProducts);
+
 productRoutes.post(productEndpoints.CREATE, ProductController.createProducts);

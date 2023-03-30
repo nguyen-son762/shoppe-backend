@@ -127,17 +127,6 @@ export class UsersController {
     }
   }
 
-  static async update(req: Request, res: Response, next: NextFunction) {
-    try {
-      const url = await uploadPicture(req);
-      return res.status(HttpStatus.OK).json({
-        url,
-      });
-    } catch (err) {
-      return throwError(next, err?.status || err?.http_code, err?.message);
-    }
-  }
-
   static async loginWithGoogleOrFacebook(req: Request, res: Response, next: NextFunction) {
     try {
       const { _id, first_name, last_name, avatar_url, email, username }: UserDef = req.body;
@@ -161,6 +150,7 @@ export class UsersController {
       if (user) {
         return res.status(HttpStatus.OK).json({
           data: user,
+          access_token: getToken(user),
         });
       }
     } catch (err) {
@@ -185,7 +175,35 @@ export class UsersController {
         message: "Fail",
       });
     } catch (err) {
-      console.warn("err", err);
+      return throwError(next, err?.status || err?.http_code, err?.message);
+    }
+  }
+
+  static async update(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = req.body;
+      if (user.avatar_url) {
+        const url = await uploadPicture(req);
+        user.avatar_url = url;
+      }
+      const userDb = await UserModel.findOneAndUpdate(
+        {
+          _id: user._id,
+        },
+        {
+          $set: {
+            ...user,
+          },
+        },
+        {
+          upsert: true,
+          new: true,
+        }
+      );
+      return res.json({
+        data: userDb,
+      });
+    } catch (err) {
       return throwError(next, err?.status || err?.http_code, err?.message);
     }
   }

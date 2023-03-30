@@ -48,6 +48,7 @@ const productSchema = new Schema<ProductDef>({
   category: {
     type: Schema.Types.ObjectId,
     ref: "Category",
+    default: "",
   },
   name: {
     type: String,
@@ -91,11 +92,10 @@ const productSchema = new Schema<ProductDef>({
         type: Number,
         default: 0,
       },
-      images: [
-        {
-          type: String,
-        },
-      ],
+      images: {
+        type: String,
+        default: "",
+      },
     },
   ],
   price_before_discount: {
@@ -150,7 +150,7 @@ const productSchema = new Schema<ProductDef>({
       type: Number,
     },
   },
-// video_info_list: [
+  // video_info_list: [
   //   {
   //     _id: Schema.Types.ObjectId,
   //     thumb_url: {

@@ -1,14 +1,11 @@
 import { HttpStatus } from "@app/constants/code.constant";
+import { CategoryModel } from "@app/models/category.model";
 import { OrderDef, OrderModel, OrderStatusEnums } from "@app/models/order.model";
 import { throwError } from "@app/utils/error";
 import { NextFunction, Request, Response } from "express";
 
-type PurchaseProductParams = {
-  user_id: string;
-  product_id: string;
-  model_id: string;
-  promotion_code: string | null;
-  cart_id: string | null;
+type PurchaseProductParams = OrderDef & {
+  cart_id: string;
 };
 
 export class OrderController {
@@ -17,7 +14,12 @@ export class OrderController {
       const { user_id } = req.params;
       const orders = await OrderModel.find({
         user: user_id,
-      }).populate("product").populate('model');
+      }).populate({
+        path: "product",
+        populate: {
+          path: "category",
+        },
+      });
       if (orders) {
         return res.status(HttpStatus.OK).json({
           data: orders,
@@ -33,9 +35,27 @@ export class OrderController {
 
   static async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const data = req.body;
+      const { user, product, model, amount } = req.body;
+      const cartOfUser = await OrderModel.findOne({
+        user,
+        model,
+      });
+      if (cartOfUser) {
+        await cartOfUser.update(
+          {
+            amount: cartOfUser.amount + amount,
+          },
+          { upsert: true }
+        );
+        return res.status(HttpStatus.OK).json({
+          is_success: true,
+        });
+      }
       const orderResponse = new OrderModel({
-        ...data,
+        user,
+        product,
+        model,
+        amount: Number(amount),
       });
       await orderResponse.save();
       return res.status(HttpStatus.OK).json({

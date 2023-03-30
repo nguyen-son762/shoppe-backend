@@ -7,7 +7,12 @@ import { UsersController } from "@controllers/user.controller";
 
 const storage = multer.memoryStorage();
 export const userRoutes = express.Router();
-const uploadImage = multer({ storage: storage }).single("avatar");
+const uploadImage = multer({
+  storage: storage,
+  limits: {
+    fieldSize: 50 * 1024 * 1024,
+  },
+}).single("avatar_url");
 
 userRoutes.post(authEndpoints.LOGIN, loginSchema, validateRequestSchema, UsersController.login);
 
