@@ -15,10 +15,13 @@ import errorMiddleware from "@app/middleware/error.middleware";
 import * as routes from "@app/routes";
 import { authEndpoints, orderEndpoints, productEndpoints } from "./constants/route.constant";
 import { client } from "./config/redis";
+import cors from 'cors'
+ 
 const app = express();
 const port = process.env.PORT || 5000;
 
 app.use(cookieParser());
+app.use(cors())
 app.use(
   express.json({
     limit: "100mb",

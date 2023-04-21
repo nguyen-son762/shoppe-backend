@@ -21,6 +21,9 @@ export interface UserDef {
   address?: AddressDef[];
   active?: boolean;
   otp?: string;
+  liked?: {
+    product: string;
+  }[];
 }
 
 const userSchema = new Schema<UserDef>({
@@ -89,6 +92,15 @@ const userSchema = new Schema<UserDef>({
     type: Boolean,
     default: true,
   },
+  liked: [
+    {
+      product: {
+        type: Schema.Types.ObjectId,
+        ref: "Product",
+        default: null
+      },
+    },
+  ],
 });
 
 export const UserModel = model<UserDef>("User", userSchema);

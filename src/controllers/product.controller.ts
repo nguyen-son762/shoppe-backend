@@ -74,6 +74,7 @@ export class ProductController {
         page: Number(page),
         limit: Number(limit),
         totalPage: Math.ceil(total / limit),
+        total: total
       });
     } catch (err) {
       return throwError(next, err?.status, err?.message);
@@ -103,6 +104,21 @@ export class ProductController {
         data: products,
       });
     } catch (err) {
+      return throwError(next, err?.status, err?.message);
+    }
+  }
+
+  static async getProductById(req: Request, res: Response, next: NextFunction){
+    try{
+      const {product_id} = req.params
+      const product = await ProductModel.findOne({
+        _id: product_id
+      });
+      return res.status(HttpStatus.OK).json({
+        data: product
+      })
+    }
+    catch (err) {
       return throwError(next, err?.status, err?.message);
     }
   }

@@ -22,48 +22,53 @@ export interface OrderDef {
   amount: number;
 }
 
-const OrderSchema = new Schema<OrderDef>({
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-    default: null,
-    required: false,
+const OrderSchema = new Schema<OrderDef>(
+  {
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+      required: false,
+    },
+    product: {
+      type: Schema.Types.ObjectId,
+      ref: "Product",
+    },
+    model: {
+      type: String,
+      default: "",
+    },
+    phonenumber: {
+      type: String,
+      default: "",
+    },
+    address: {
+      type: String,
+      default: "",
+    },
+    promotion_code: {
+      type: String,
+      default: "",
+    },
+    note: {
+      type: String,
+      default: "",
+    },
+    status: {
+      type: String,
+      enum: OrderStatusEnums,
+      required: true,
+      default: OrderStatusEnums.INCART,
+    },
+    amount: {
+      type: Number,
+      default: 1,
+    },
   },
-  product: {
-    type: Schema.Types.ObjectId,
-    ref: "Product",
-  },
-  model: {
-    type: String,
-    default: "",
-  },
-  phonenumber: {
-    type: String,
-    default: "",
-  },
-  address: {
-    type: String,
-    default: "",
-  },
-  promotion_code: {
-    type: String,
-    default: "",
-  },
-  note: {
-    type: String,
-    default: "",
-  },
-  status: {
-    type: String,
-    enum: OrderStatusEnums,
-    required: true,
-    default: OrderStatusEnums.INCART,
-  },
-  amount: {
-    type: Number,
-    default: 1,
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 export const OrderModel = model<OrderDef>("Order", OrderSchema);
 

@@ -11,18 +11,78 @@ type PurchaseProductParams = OrderDef & {
 export class OrderController {
   static async get(req: Request, res: Response, next: NextFunction) {
     try {
-      const { user_id } = req.params;
-      const orders = await OrderModel.find({
-        user: user_id,
-      }).populate({
+      const { user_id, page } = req.params;
+      const status = req.query.status;
+      let query = {};
+      if(user_id){
+        query = {
+          user: user_id,
+        }
+      }
+      if (status) {
+        query = {
+          ...query,
+          status,
+        };
+      }
+      const orders = await OrderModel.find(query).populate({
         path: "product",
         populate: {
           path: "category",
         },
       });
+      const total  = await OrderModel.find(query).countDocuments()
       if (orders) {
         return res.status(HttpStatus.OK).json({
           data: orders,
+          total,
+          page: Number(page),
+          limit: Number(10),
+          totalPage: Math.ceil(total / 10),
+        });
+      }
+      return res.status(HttpStatus.OK).json({
+        data: [],
+      });
+    } catch (err) {
+      return throwError(next, err?.status, err?.message);
+    }
+  }
+
+  static async getAll(req: Request, res: Response, next: NextFunction) {
+    try {
+      let result = {};
+      const { page = 1, status,from,to } = req.query;
+      let query = {
+        createdAt: {
+          $gte: new Date(from as string),
+          $lt: new Date(to as string),
+        },
+      } as any;
+      if (status) {
+        query = {
+          ...query,
+          status,
+        };
+      }
+      const orders = await OrderModel.find(query)
+        .skip((Number(page) - 1) * 10)
+        .limit(20)
+        .populate([{
+          path: "product",
+          populate: {
+            path: "category",
+          },
+        },{
+          path: "user",
+        }]);
+      const total = await OrderModel.countDocuments(query);
+      if (orders) {
+        return res.status(HttpStatus.OK).json({
+          data: orders,
+          total,
+          totalPage: Math.ceil(total / 10),
+          page: Number(page),
         });
       }
       return res.status(HttpStatus.OK).json({
@@ -76,7 +136,7 @@ export class OrderController {
       OrderModel.insertMany(
         data.map((item: OrderDef) => ({
           ...item,
-          status: OrderStatusEnums.ORDERED,
+          status: OrderStatusEnums.ORDERING,
         }))
       )
         .then(() => {
@@ -87,6 +147,55 @@ export class OrderController {
         .catch(err => {
           return throwError(next, err?.status, err?.message);
         });
+    } catch (err) {
+      return throwError(next, err?.status, err?.message);
+    }
+  }
+
+  static async getStatus(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { user_id } = req.params;
+      const orders = await OrderModel.find({
+        user: user_id,
+      });
+      const status = {
+        ORDERED: 0,
+        ORDERING: 0,
+        PICKING: 0,
+      };
+      orders.map(order => {
+        status[order.status] += 1;
+      });
+      return res.status(HttpStatus.OK).json({
+        status,
+      });
+    } catch (err) {
+      return throwError(next, err?.status, err?.message);
+    }
+  }
+
+  static async updateStatus(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { user_id } = req.params;
+      const { status, order_id } = req.body;
+      const data = await OrderModel.findOneAndUpdate(
+        {
+          user: user_id,
+          _id: order_id,
+        },
+        {
+          $set: {
+            status,
+          },
+        },
+        {
+          upsert: true,
+          new: true,
+        }
+      );
+      return res.status(HttpStatus.OK).json({
+        data: data,
+      });
     } catch (err) {
       return throwError(next, err?.status, err?.message);
     }

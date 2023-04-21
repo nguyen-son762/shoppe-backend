@@ -207,4 +207,67 @@ export class UsersController {
       return throwError(next, err?.status || err?.http_code, err?.message);
     }
   }
+
+  static async liked(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { user_id, product } = req.body;
+      const userDb = await UserModel.findOne({
+        _id: user_id,
+      });
+      const likedProductDb = userDb.liked ? [...userDb.liked] : [];
+      const likedProducts = likedProductDb.find(item => item.product.toString() === product)
+        ? likedProductDb.filter(item => item.product.toString() !== product)
+        : likedProductDb.concat({
+            product,
+          });
+      const user =  await UserModel.findOneAndUpdate(
+        {
+          _id: user_id,
+        },
+        {
+          liked: likedProducts,
+        },
+        {
+          upsert: true,
+          new: true,
+        }
+      );
+      return res.json({
+        data: user
+      });
+    } catch (err) {
+      return throwError(next, err?.status || err?.http_code, err?.message);
+    }
+  }
+
+  static async getTotal(req: Request, res: Response, next: NextFunction) {
+    try {
+      const total = await UserModel.find().countDocuments();
+      return res.json({
+        total,
+      });
+    } catch (err) {
+      return throwError(next, err?.status || err?.http_code, err?.message);
+    }
+  }
+
+  static async getListUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const limit = 10;
+      const { page = 1 } = req.query;
+      const users = await UserModel.find()
+        .skip((Number(page) - 1) * limit)
+        .limit(limit);
+      const total = await UserModel.find().countDocuments();
+      return res.status(HttpStatus.OK).json({
+        data: users,
+        page: Number(page),
+        limit: Number(limit),
+        totalPage: Math.ceil(total / limit),
+        total
+      });
+    } catch (err) {
+      return throwError(next, err?.status || err?.http_code, err?.message);
+    }
+  }
 }

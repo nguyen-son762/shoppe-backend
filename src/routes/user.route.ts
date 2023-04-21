@@ -16,6 +16,10 @@ const uploadImage = multer({
 
 userRoutes.post(authEndpoints.LOGIN, loginSchema, validateRequestSchema, UsersController.login);
 
+userRoutes.post(authEndpoints.LIKED, UsersController.liked);
+
+userRoutes.get(authEndpoints.TOTAL, UsersController.getTotal);
+
 userRoutes.post(authEndpoints.LOGIN_WITH_PLATFORM, UsersController.loginWithGoogleOrFacebook);
 
 userRoutes.post(
@@ -34,3 +38,5 @@ userRoutes.post(
 userRoutes.patch(authEndpoints.UPDATE, uploadImage, UsersController.update);
 
 userRoutes.post(authEndpoints.VERIFY, UsersController.verifyOTP);
+
+userRoutes.get(authEndpoints.LIST, UsersController.getListUser);
