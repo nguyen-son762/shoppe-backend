@@ -1,9 +1,9 @@
 import express from "express";
 import multer from "multer";
-import { authEndpoints } from "@app/constants/route.constant";
-import { validateRequestSchema } from "@app/middleware/validate.middleware";
-import { loginSchema, registerSchema } from "@app/schema/auth.schema";
-import { UsersController } from "@controllers/user.controller";
+import { authEndpoints } from "../constants/route.constant";
+import { validateRequestSchema } from "../middleware/validate.middleware";
+import { loginSchema, registerSchema } from "../schema/auth.schema";
+import { UsersController } from "../controllers/user.controller";
 
 const storage = multer.memoryStorage();
 export const userRoutes = express.Router();

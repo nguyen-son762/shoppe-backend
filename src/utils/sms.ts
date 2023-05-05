@@ -1,4 +1,4 @@
-import { smsClient } from "@app/services/sms.service";
+import { smsClient } from "../services/sms.service";
 import { getEnv } from "./env";
 
 export const sendSMS = async (phonenumber: string, body: string) => {

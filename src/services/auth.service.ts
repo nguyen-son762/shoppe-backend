@@ -1,9 +1,9 @@
-import { TIME_EXPIRED_REFRESH_TOKEN_HOURS } from "@app/constants/auth.constant";
-import { HttpStatus } from "@app/constants/code.constant";
-import { HttpException } from "@app/exception/httpException";
-import { encodePassword, comparePassword, getToken } from "@app/utils/auth";
+import { TIME_EXPIRED_REFRESH_TOKEN_HOURS } from "../constants/auth.constant";
+import { HttpStatus } from "../constants/code.constant";
+import { HttpException } from "../exception/httpException";
+import { encodePassword, comparePassword, getToken } from "../utils/auth";
 import { UserDef, UserModel } from "@models/user.model";
-import { ERROR_MSG } from "@app/constants/message.constant";
+import { ERROR_MSG } from "../constants/message.constant";
 
 export class UserService {
   static async register(user: UserDef) {

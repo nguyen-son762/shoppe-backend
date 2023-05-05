@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { hash, compare } from "bcrypt";
-import { TIME_EXPIRED_ACCESS_TOKEN_HOURS, SALT_ROUNDS } from "@app/constants/auth.constant";
-import { UserDocument } from "@models/user.model";
+import { TIME_EXPIRED_ACCESS_TOKEN_HOURS, SALT_ROUNDS } from "../constants/auth.constant";
+import { UserDocument } from "../models/user.model";
 import { getEnv } from "./env";
 
 export const getToken = (user: UserDocument, expired?: number | string) => {

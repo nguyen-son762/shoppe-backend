@@ -1,13 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-import { HttpStatus } from "@app/constants/code.constant";
-import { decodeToken, getToken } from "@app/utils/auth";
-import { throwError } from "@app/utils/error";
+import { HttpStatus } from "../constants/code.constant";
+import { decodeToken, getToken } from "../utils/auth";
+import { throwError } from "../utils/error";
 import { UserModel, UserDef, UserDocument } from "@models/user.model";
-import { TIME_EXPIRED_REFRESH_TOKEN_HOURS } from "@app/constants/auth.constant";
-import { UserService } from "@app/services/auth.service";
-import { uploadPicture } from "@app/utils/upload";
-import { UploadApiResponse } from "cloudinary";
-import { sendSMS } from "@app/utils/sms";
+import { TIME_EXPIRED_REFRESH_TOKEN_HOURS } from "../constants/auth.constant";
+import { UserService } from "../services/auth.service";
+import { uploadPicture } from "../utils/upload";
 import otpGenerator from "otp-generator";
 
 interface UserResponseDef {

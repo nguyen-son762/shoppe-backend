@@ -1,7 +1,7 @@
-import { HttpStatus } from "@app/constants/code.constant";
-import { CategoryModel } from "@app/models/category.model";
-import { OrderDef, OrderModel, OrderStatusEnums } from "@app/models/order.model";
-import { throwError } from "@app/utils/error";
+import { HttpStatus } from "../constants/code.constant";
+import { CategoryModel } from "../models/category.model";
+import { OrderDef, OrderModel, OrderStatusEnums } from "../models/order.model";
+import { throwError } from "../utils/error";
 import { NextFunction, Request, Response } from "express";
 
 type PurchaseProductParams = OrderDef & {

@@ -1,4 +1,4 @@
-import { getEnv } from "@app/utils/env";
+import { getEnv } from "../utils/env";
 import mongoose, { connect, set } from "mongoose";
 
 export const connectDB = async () => {

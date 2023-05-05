@@ -1,7 +1,7 @@
-import { HttpStatus } from "@app/constants/code.constant";
-import { CategoryModel } from "@app/models/category.model";
-import { ProductDocument, ProductModel } from "@app/models/product.model";
-import { throwError } from "@app/utils/error";
+import { HttpStatus } from "../constants/code.constant";
+import { CategoryModel } from "../models/category.model";
+import { ProductDocument, ProductModel } from "../models/product.model";
+import { throwError } from "../utils/error";
 import { NextFunction, Request, Response } from "express";
 
 interface GetProductsParams {

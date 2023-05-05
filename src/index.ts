@@ -10,9 +10,9 @@ import compression from "compression";
 
 import { connectDB } from "@config/db";
 
-import errorMiddleware from "@app/middleware/error.middleware";
+import errorMiddleware from "./middleware/error.middleware";
 
-import * as routes from "@app/routes";
+import * as routes from "./routes";
 import { authEndpoints, orderEndpoints, productEndpoints } from "./constants/route.constant";
 import { client } from "./config/redis";
 import cors from 'cors'
@@ -59,7 +59,11 @@ cloudinary.v2.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
   secure: true,
 });
-
+app.use("/", (req,res)=>{
+  return res.json({
+    msg: 'success'
+  })
+});
 // config swagger
 app.use("/api-docs", swaggerUi.serve);
 app.get("/api-docs", swaggerUi.setup(swaggerDocument));

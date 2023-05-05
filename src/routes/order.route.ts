@@ -1,5 +1,5 @@
 import { OrderController } from "./../controllers/order.controller";
-import { orderEndpoints } from "@app/constants/route.constant";
+import { orderEndpoints } from "../constants/route.constant";
 import express from "express";
 
 export const orderRoutes = express.Router();

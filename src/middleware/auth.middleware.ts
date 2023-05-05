@@ -1,4 +1,4 @@
-import { decodeToken } from "@app/utils/auth";
+import { decodeToken } from "../utils/auth";
 import { NextFunction, Request, Response } from "express";
 
 export function authMiddleware(req: Request, res: Response, next: NextFunction) {
