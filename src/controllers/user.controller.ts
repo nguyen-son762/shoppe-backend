@@ -71,7 +71,7 @@ export class UsersController {
         phone_number,
         password,
         otp,
-        active: false,
+        active: true,
       });
       const result: UserResponseDef = {
         data: newUser,

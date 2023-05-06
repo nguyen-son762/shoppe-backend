@@ -59,11 +59,7 @@ cloudinary.v2.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
   secure: true,
 });
-app.use("/", (req,res)=>{
-  return res.json({
-    msg: 'success'
-  })
-});
+
 // config swagger
 app.use("/api-docs", swaggerUi.serve);
 app.get("/api-docs", swaggerUi.setup(swaggerDocument));
