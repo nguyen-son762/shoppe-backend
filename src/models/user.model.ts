@@ -30,67 +30,67 @@ const userSchema = new Schema<UserDef>({
   platform_id: {
     type: String,
     required: false,
-    default: "",
+    default: ""
   },
   username: { type: String, default: "" },
   first_name: {
     type: String,
-    default: "",
+    default: ""
   },
   last_name: {
     type: String,
-    default: "",
+    default: ""
   },
   email: { type: String, default: "" },
   password: {
     type: String,
     required: true,
-    default: "",
+    default: ""
   },
   avatar_url: {
     type: String,
-    default: "",
+    default: ""
   },
   phone_number: {
     type: String,
-    default: "",
+    default: ""
   },
   address: [
     {
       name: {
         type: String,
-        default: "",
+        default: ""
       },
       phone_number: {
         type: String,
-        default: "",
+        default: ""
       },
       city: {
         type: String,
-        default: "",
+        default: ""
       },
       street: {
         type: String,
-        default: "",
+        default: ""
       },
       default: {
         type: Boolean,
-        default: true,
-      },
-    },
+        default: true
+      }
+    }
   ],
   refresh_token: {
     type: String,
-    default: "",
+    default: ""
   },
   otp: {
     type: String,
     default: "PENDING",
-    expires: "5m",
+    expires: "5m"
   },
   active: {
     type: Boolean,
-    default: true,
+    default: true
   },
   liked: [
     {
@@ -98,9 +98,9 @@ const userSchema = new Schema<UserDef>({
         type: Schema.Types.ObjectId,
         ref: "Product",
         default: null
-      },
-    },
-  ],
+      }
+    }
+  ]
 });
 
 export const UserModel = model<UserDef>("User", userSchema);

@@ -6,9 +6,9 @@ import { UserDef, UserModel } from "@models/user.model";
 import { ERROR_MSG } from "../constants/message.constant";
 
 export class UserService {
-  static async register(user: UserDef) {
+  static async register (user: UserDef) {
     const userDb = await UserModel.findOne({
-      email: user.email,
+      email: user.email
     });
     if (userDb) {
       throw new HttpException(HttpStatus.CONFLICT, ERROR_MSG.USER_EXISTED);
@@ -16,7 +16,7 @@ export class UserService {
     const encodePwd = await encodePassword(user.password);
     const userResponse = new UserModel({
       ...user,
-      password: encodePwd,
+      password: encodePwd
     });
     const newUser = await userResponse.save();
     if (!newUser) {
@@ -25,7 +25,7 @@ export class UserService {
     newUser.refresh_token = getToken(newUser, `${TIME_EXPIRED_REFRESH_TOKEN_HOURS}h`);
     await UserModel.findOneAndUpdate(
       {
-        _id: newUser._id,
+        _id: newUser._id
       },
       newUser,
       { upsert: true }
@@ -33,9 +33,9 @@ export class UserService {
     return newUser;
   }
 
-  static async login(user: UserDef) {
+  static async login (user: UserDef) {
     const userDb = await UserModel.findOne({
-      phone_number: user.phone_number,
+      phone_number: user.phone_number
     });
     if (!userDb) {
       throw new HttpException(HttpStatus.BAD_REQUEST, ERROR_MSG.USER_NOT_FOUND);

@@ -9,7 +9,7 @@ export const getToken = (user: UserDocument, expired?: number | string) => {
     expired = `${TIME_EXPIRED_ACCESS_TOKEN_HOURS}h`;
   }
   return jwt.sign(user.toJSON(), getEnv("JWT_SECRET_KEY"), {
-    expiresIn: expired,
+    expiresIn: expired
   });
 };
 

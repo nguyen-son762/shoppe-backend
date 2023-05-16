@@ -9,8 +9,8 @@ export const authEndpoints = {
   VERIFY: "/verify",
   REGISTER_BY_PHONE_NUMBER: "/register/phone",
   LIKED: "/liked",
-  TOTAL: '/total',
-  LIST: '/list'
+  TOTAL: "/total",
+  LIST: "/list"
 };
 
 export const productEndpoints = {
@@ -18,7 +18,7 @@ export const productEndpoints = {
   CREATE: "/create",
   GET: "/",
   RECOMMEND: "/recommend",
-  GET_BY_ID: '/detail/:product_id'
+  GET_BY_ID: "/detail/:product_id"
 };
 
 export const orderEndpoints = {
@@ -28,5 +28,5 @@ export const orderEndpoints = {
   CREATE: "/create",
   PURCHASE: "/purchase",
   GET_STATUS: "/status/:user_id",
-  UPDATE: "/status/:user_id",
+  UPDATE: "/status/:user_id"
 };

@@ -8,8 +8,8 @@ export interface CategoryDef {
 const categorySchema = new Schema<CategoryDef>({
   name: {
     type: String,
-    default: "",
-  },
+    default: ""
+  }
 });
 
 export const CategoryModel = model<CategoryDef>("Category", categorySchema);

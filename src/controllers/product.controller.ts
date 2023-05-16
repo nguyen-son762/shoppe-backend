@@ -20,7 +20,7 @@ interface GetProduuctsResponse {
 }
 
 export class ProductController {
-  static async getProducts(
+  static async getProducts (
     req: Request,
     res: Response,
     next: NextFunction
@@ -31,30 +31,31 @@ export class ProductController {
         limit = 10,
         keyword = "",
         category,
-        sort = "",
+        sort = ""
       }: GetProductsParams = req.query as any;
       let querySearch = {};
       if (keyword) {
         querySearch = {
           ...querySearch,
-          name: new RegExp(keyword.toLowerCase()),
+          name: new RegExp(keyword.toLowerCase())
         };
       }
       if (category) {
         querySearch = {
           ...querySearch,
-          category,
+          category
         };
       }
+      console.log("querySearch", querySearch);
       let products;
       if (sort) {
         products = await ProductModel.find(querySearch)
           .populate({
             path: "category",
-            model: CategoryModel,
+            model: CategoryModel
           })
           .sort({
-            price: sort === "asc" ? 1 : -1,
+            price: sort === "asc" ? 1 : -1
           })
           .skip((page - 1) * limit)
           .limit(limit);
@@ -62,13 +63,12 @@ export class ProductController {
         products = await ProductModel.find(querySearch)
           .populate({
             path: "category",
-            model: CategoryModel,
+            model: CategoryModel
           })
           .skip((page - 1) * limit)
           .limit(limit);
       }
       const total = await ProductModel.countDocuments(querySearch);
-
       return res.status(HttpStatus.OK).json({
         data: products,
         page: Number(page),
@@ -81,7 +81,7 @@ export class ProductController {
     }
   }
 
-  static async createProducts(req: Request, res: Response, next: NextFunction) {
+  static async createProducts (req: Request, res: Response, next: NextFunction) {
     const { products } = req.body;
     ProductModel.insertMany(products)
       .then(data => {
@@ -92,33 +92,32 @@ export class ProductController {
       });
   }
 
-  static async getRecommendedProducts(req: Request, res: Response, next: NextFunction) {
+  static async getRecommendedProducts (req: Request, res: Response, next: NextFunction) {
     try {
       const products = await ProductModel.find({
         name: {
           $regex: `${req.query.name}`,
-          $options: "i",
-        },
+          $options: "i"
+        }
       });
       return res.json({
-        data: products,
+        data: products
       });
     } catch (err) {
       return throwError(next, err?.status, err?.message);
     }
   }
 
-  static async getProductById(req: Request, res: Response, next: NextFunction){
-    try{
-      const {product_id} = req.params
+  static async getProductById (req: Request, res: Response, next: NextFunction) {
+    try {
+      const { product_id } = req.params;
       const product = await ProductModel.findOne({
         _id: product_id
       });
       return res.status(HttpStatus.OK).json({
         data: product
-      })
-    }
-    catch (err) {
+      });
+    } catch (err) {
       return throwError(next, err?.status, err?.message);
     }
   }

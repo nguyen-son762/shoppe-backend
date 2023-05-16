@@ -6,7 +6,7 @@ export const connectDB = async () => {
   try {
     set("strictQuery", false);
     await connect(getEnv("MONGO_DB_URI"), {
-      autoIndex: false,
+      autoIndex: false
     });
     console.log("Connect to database succeed");
   } catch {

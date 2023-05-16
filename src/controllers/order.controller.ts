@@ -9,60 +9,60 @@ type PurchaseProductParams = OrderDef & {
 };
 
 export class OrderController {
-  static async get(req: Request, res: Response, next: NextFunction) {
+  static async get (req: Request, res: Response, next: NextFunction) {
     try {
       const { user_id, page } = req.params;
       const status = req.query.status;
       let query = {};
-      if(user_id){
+      if (user_id) {
         query = {
-          user: user_id,
-        }
+          user: user_id
+        };
       }
       if (status) {
         query = {
           ...query,
-          status,
+          status
         };
       }
       const orders = await OrderModel.find(query).populate({
         path: "product",
         populate: {
-          path: "category",
-        },
+          path: "category"
+        }
       });
-      const total  = await OrderModel.find(query).countDocuments()
+      const total = await OrderModel.find(query).countDocuments();
       if (orders) {
         return res.status(HttpStatus.OK).json({
           data: orders,
           total,
           page: Number(page),
           limit: Number(10),
-          totalPage: Math.ceil(total / 10),
+          totalPage: Math.ceil(total / 10)
         });
       }
       return res.status(HttpStatus.OK).json({
-        data: [],
+        data: []
       });
     } catch (err) {
       return throwError(next, err?.status, err?.message);
     }
   }
 
-  static async getAll(req: Request, res: Response, next: NextFunction) {
+  static async getAll (req: Request, res: Response, next: NextFunction) {
     try {
-      let result = {};
-      const { page = 1, status,from,to } = req.query;
+      const result = {};
+      const { page = 1, status, from, to } = req.query;
       let query = {
         createdAt: {
           $gte: new Date(from as string),
-          $lt: new Date(to as string),
-        },
+          $lt: new Date(to as string)
+        }
       } as any;
       if (status) {
         query = {
           ...query,
-          status,
+          status
         };
       }
       const orders = await OrderModel.find(query)
@@ -71,10 +71,10 @@ export class OrderController {
         .populate([{
           path: "product",
           populate: {
-            path: "category",
-          },
-        },{
-          path: "user",
+            path: "category"
+          }
+        }, {
+          path: "user"
         }]);
       const total = await OrderModel.countDocuments(query);
       if (orders) {
@@ -82,33 +82,33 @@ export class OrderController {
           data: orders,
           total,
           totalPage: Math.ceil(total / 10),
-          page: Number(page),
+          page: Number(page)
         });
       }
       return res.status(HttpStatus.OK).json({
-        data: [],
+        data: []
       });
     } catch (err) {
       return throwError(next, err?.status, err?.message);
     }
   }
 
-  static async create(req: Request, res: Response, next: NextFunction) {
+  static async create (req: Request, res: Response, next: NextFunction) {
     try {
-      const { user, product, model, amount } = req.body;
+      const { user, product, model, amount, status = OrderStatusEnums.ORDERING } = req.body;
       const cartOfUser = await OrderModel.findOne({
         user,
-        model,
+        model
       });
       if (cartOfUser) {
         await cartOfUser.update(
           {
-            amount: cartOfUser.amount + amount,
+            amount: cartOfUser.amount + amount
           },
           { upsert: true }
         );
         return res.status(HttpStatus.OK).json({
-          is_success: true,
+          is_success: true
         });
       }
       const orderResponse = new OrderModel({
@@ -116,17 +116,18 @@ export class OrderController {
         product,
         model,
         amount: Number(amount),
+        status
       });
       await orderResponse.save();
       return res.status(HttpStatus.OK).json({
-        is_success: true,
+        is_success: true
       });
     } catch (err) {
       return throwError(next, err?.status, err?.message);
     }
   }
 
-  static async purchase(req: Request, res: Response, next: NextFunction) {
+  static async purchase (req: Request, res: Response, next: NextFunction) {
     try {
       const { data } = req.body;
       const cardIds = (data as PurchaseProductParams[])
@@ -136,12 +137,12 @@ export class OrderController {
       OrderModel.insertMany(
         data.map((item: OrderDef) => ({
           ...item,
-          status: OrderStatusEnums.ORDERING,
+          status: OrderStatusEnums.ORDERING
         }))
       )
         .then(() => {
           return res.status(HttpStatus.OK).json({
-            is_success: true,
+            is_success: true
           });
         })
         .catch(err => {
@@ -152,49 +153,49 @@ export class OrderController {
     }
   }
 
-  static async getStatus(req: Request, res: Response, next: NextFunction) {
+  static async getStatus (req: Request, res: Response, next: NextFunction) {
     try {
       const { user_id } = req.params;
       const orders = await OrderModel.find({
-        user: user_id,
+        user: user_id
       });
       const status = {
         ORDERED: 0,
         ORDERING: 0,
-        PICKING: 0,
+        PICKING: 0
       };
       orders.map(order => {
         status[order.status] += 1;
       });
       return res.status(HttpStatus.OK).json({
-        status,
+        status
       });
     } catch (err) {
       return throwError(next, err?.status, err?.message);
     }
   }
 
-  static async updateStatus(req: Request, res: Response, next: NextFunction) {
+  static async updateStatus (req: Request, res: Response, next: NextFunction) {
     try {
       const { user_id } = req.params;
       const { status, order_id } = req.body;
       const data = await OrderModel.findOneAndUpdate(
         {
           user: user_id,
-          _id: order_id,
+          _id: order_id
         },
         {
           $set: {
-            status,
-          },
+            status
+          }
         },
         {
           upsert: true,
-          new: true,
+          new: true
         }
       );
       return res.status(HttpStatus.OK).json({
-        data: data,
+        data: data
       });
     } catch (err) {
       return throwError(next, err?.status, err?.message);

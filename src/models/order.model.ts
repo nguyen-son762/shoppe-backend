@@ -28,45 +28,45 @@ const OrderSchema = new Schema<OrderDef>(
       type: Schema.Types.ObjectId,
       ref: "User",
       default: null,
-      required: false,
+      required: false
     },
     product: {
       type: Schema.Types.ObjectId,
-      ref: "Product",
+      ref: "Product"
     },
     model: {
       type: String,
-      default: "",
+      default: ""
     },
     phonenumber: {
       type: String,
-      default: "",
+      default: ""
     },
     address: {
       type: String,
-      default: "",
+      default: ""
     },
     promotion_code: {
       type: String,
-      default: "",
+      default: ""
     },
     note: {
       type: String,
-      default: "",
+      default: ""
     },
     status: {
       type: String,
       enum: OrderStatusEnums,
       required: true,
-      default: OrderStatusEnums.INCART,
+      default: OrderStatusEnums.INCART
     },
     amount: {
       type: Number,
-      default: 1,
-    },
+      default: 1
+    }
   },
   {
-    timestamps: true,
+    timestamps: true
   }
 );
 

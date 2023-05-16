@@ -15,18 +15,18 @@ interface UserResponseDef {
 }
 
 export class UsersController {
-  static async register(req: Request, res: Response, next: NextFunction) {
+  static async register (req: Request, res: Response, next: NextFunction) {
     try {
       const { username, first_name, last_name, email, phone_number, password }: UserDef = req.body;
       const otp = otpGenerator.generate(4, {
         specialChars: false,
         lowerCaseAlphabets: false,
-        upperCaseAlphabets: false,
+        upperCaseAlphabets: false
       });
       const verifyUser = await UserModel.find({ phone_number });
       if (verifyUser) {
         return res.status(HttpStatus.FOUND).json({
-          msg: "User is existed",
+          msg: "User is existed"
         });
       }
       // await sendSMS(phone_number, `Your Shopee Fake verification code: ${otp}`);
@@ -38,12 +38,12 @@ export class UsersController {
         phone_number,
         password,
         otp,
-        active: false,
+        active: false
       });
       const result: UserResponseDef = {
         data: newUser,
         access_token: getToken(newUser),
-        refresh_token: newUser.refresh_token,
+        refresh_token: newUser.refresh_token
       };
       res.status(HttpStatus.OK).json(result);
     } catch (err) {
@@ -51,18 +51,18 @@ export class UsersController {
     }
   }
 
-  static async registerByPhonenumber(req: Request, res: Response, next: NextFunction) {
+  static async registerByPhonenumber (req: Request, res: Response, next: NextFunction) {
     try {
       const { phone_number, password, first_name, last_name }: UserDef = req.body;
       const otp = otpGenerator.generate(4, {
         specialChars: false,
         lowerCaseAlphabets: false,
-        upperCaseAlphabets: false,
+        upperCaseAlphabets: false
       });
       const verifyUser = await UserModel.findOne({ phone_number });
       if (verifyUser) {
         return res.status(HttpStatus.FOUND).json({
-          msg: "User is existed",
+          msg: "User is existed"
         });
       }
       const newUser = await UserService.register({
@@ -71,12 +71,12 @@ export class UsersController {
         phone_number,
         password,
         otp,
-        active: true,
+        active: true
       });
       const result: UserResponseDef = {
         data: newUser,
         access_token: getToken(newUser),
-        refresh_token: newUser.refresh_token,
+        refresh_token: newUser.refresh_token
       };
       // await sendSMS(phone_number, `Your Shopee Fake verification code: ${otp}`);
       res.status(HttpStatus.OK).json(result);
@@ -86,13 +86,13 @@ export class UsersController {
     }
   }
 
-  static async login(req: Request, res: Response, next: NextFunction) {
+  static async login (req: Request, res: Response, next: NextFunction) {
     try {
       const { phone_number, password }: UserDef = req.body;
       const user = await UserService.login({ phone_number, password });
       if (!user || !user.active) {
         return res.status(HttpStatus.BAD_REQUEST).json({
-          msg: "User is not found",
+          msg: "User is not found"
         });
       }
       const pwdDecoded = decodeToken(user.refresh_token);
@@ -102,13 +102,13 @@ export class UsersController {
         const newToken = getToken(user, `${TIME_EXPIRED_REFRESH_TOKEN_HOURS}h`);
         userNeedUpdated = await UserModel.findOneAndUpdate(
           {
-            _id: user.id,
+            _id: user.id
           },
           {
-            refresh_token: newToken,
+            refresh_token: newToken
           },
           {
-            new: true,
+            new: true
           }
         );
         refresh_token = userNeedUpdated.refresh_token;
@@ -116,7 +116,7 @@ export class UsersController {
       const result: UserResponseDef = {
         data: userNeedUpdated || user,
         access_token: getToken(user),
-        refresh_token,
+        refresh_token
       };
 
       res.status(HttpStatus.OK).json(result);
@@ -125,12 +125,12 @@ export class UsersController {
     }
   }
 
-  static async loginWithGoogleOrFacebook(req: Request, res: Response, next: NextFunction) {
+  static async loginWithGoogleOrFacebook (req: Request, res: Response, next: NextFunction) {
     try {
       const { _id, first_name, last_name, avatar_url, email, username }: UserDef = req.body;
       const user = await UserModel.findOneAndUpdate(
         {
-          platform_id: _id,
+          platform_id: _id
         },
         {
           $set: {
@@ -138,17 +138,17 @@ export class UsersController {
             last_name,
             avatar_url,
             email,
-            username,
-          },
+            username
+          }
         },
         {
-          upsert: true,
+          upsert: true
         }
       );
       if (user) {
         return res.status(HttpStatus.OK).json({
           data: user,
-          access_token: getToken(user),
+          access_token: getToken(user)
         });
       }
     } catch (err) {
@@ -156,7 +156,7 @@ export class UsersController {
     }
   }
 
-  static async verifyOTP(req: Request, res: Response, next: NextFunction) {
+  static async verifyOTP (req: Request, res: Response, next: NextFunction) {
     try {
       const { access_token, otp } = req.body;
       const data = decodeToken(access_token) as UserDef;
@@ -166,18 +166,18 @@ export class UsersController {
         await user.save();
         return res.status(HttpStatus.OK).json({
           data: user,
-          access_token: getToken(user),
+          access_token: getToken(user)
         });
       }
       return res.status(HttpStatus.BAD_GATEWAY).json({
-        message: "Fail",
+        message: "Fail"
       });
     } catch (err) {
       return throwError(next, err?.status || err?.http_code, err?.message);
     }
   }
 
-  static async update(req: Request, res: Response, next: NextFunction) {
+  static async update (req: Request, res: Response, next: NextFunction) {
     try {
       const user = req.body;
       if (user.avatar_url) {
@@ -186,48 +186,48 @@ export class UsersController {
       }
       const userDb = await UserModel.findOneAndUpdate(
         {
-          _id: user._id,
+          _id: user._id
         },
         {
           $set: {
-            ...user,
-          },
+            ...user
+          }
         },
         {
           upsert: true,
-          new: true,
+          new: true
         }
       );
       return res.json({
-        data: userDb,
+        data: userDb
       });
     } catch (err) {
       return throwError(next, err?.status || err?.http_code, err?.message);
     }
   }
 
-  static async liked(req: Request, res: Response, next: NextFunction) {
+  static async liked (req: Request, res: Response, next: NextFunction) {
     try {
       const { user_id, product } = req.body;
       const userDb = await UserModel.findOne({
-        _id: user_id,
+        _id: user_id
       });
       const likedProductDb = userDb.liked ? [...userDb.liked] : [];
       const likedProducts = likedProductDb.find(item => item.product.toString() === product)
         ? likedProductDb.filter(item => item.product.toString() !== product)
         : likedProductDb.concat({
-            product,
-          });
-      const user =  await UserModel.findOneAndUpdate(
+          product
+        });
+      const user = await UserModel.findOneAndUpdate(
         {
-          _id: user_id,
+          _id: user_id
         },
         {
-          liked: likedProducts,
+          liked: likedProducts
         },
         {
           upsert: true,
-          new: true,
+          new: true
         }
       );
       return res.json({
@@ -238,18 +238,18 @@ export class UsersController {
     }
   }
 
-  static async getTotal(req: Request, res: Response, next: NextFunction) {
+  static async getTotal (req: Request, res: Response, next: NextFunction) {
     try {
       const total = await UserModel.find().countDocuments();
       return res.json({
-        total,
+        total
       });
     } catch (err) {
       return throwError(next, err?.status || err?.http_code, err?.message);
     }
   }
 
-  static async getListUser(req: Request, res: Response, next: NextFunction) {
+  static async getListUser (req: Request, res: Response, next: NextFunction) {
     try {
       const limit = 10;
       const { page = 1 } = req.query;

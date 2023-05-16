@@ -10,16 +10,16 @@ export interface PromotionDef {
 const promotionSchema = new Schema<PromotionDef>({
   value: {
     type: Number,
-    default: 0,
+    default: 0
   },
   condition: {
     type: Number,
-    default: 0,
+    default: 0
   },
   description: {
     type: String,
-    default: "",
-  },
+    default: ""
+  }
 });
 
 export const UserModel = model<PromotionDef>("Promotion", promotionSchema);

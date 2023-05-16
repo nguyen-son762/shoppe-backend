@@ -48,108 +48,108 @@ const productSchema = new Schema<ProductDef>({
   category: {
     type: Schema.Types.ObjectId,
     ref: "Category",
-    default: "",
+    default: ""
   },
   name: {
     type: String,
     default: "",
-    index: true,
+    index: true
   },
   price: {
     type: Number,
-    default: 0,
+    default: 0
   },
   thumb_url: {
     type: String,
-    default: "https://alxgroup.com.au/wp-content/uploads/2016/04/dummy-post-horisontal.jpg",
+    default: "https://alxgroup.com.au/wp-content/uploads/2016/04/dummy-post-horisontal.jpg"
   },
   description: {
     type: String,
-    default: "",
+    default: ""
   },
   images: [
     {
-      type: String,
-    },
+      type: String
+    }
   ],
   models: [
     {
       _id: {
         type: Schema.Types.ObjectId,
         required: true,
-        auto: true,
+        auto: true
       },
       name: {
         type: String,
         index: true,
-        default: "",
+        default: ""
       },
       price: {
         type: Number,
-        default: 0,
+        default: 0
       },
       promotion: {
         type: Number,
-        default: 0,
+        default: 0
       },
       images: {
         type: String,
-        default: "",
-      },
-    },
+        default: ""
+      }
+    }
   ],
   price_before_discount: {
     type: Number,
-    default: 0,
+    default: 0
   },
   price_max: {
     type: Number,
-    default: 0,
+    default: 0
   },
   price_max_before_discount: {
     type: Number,
-    default: 0,
+    default: 0
   },
   price_min: {
     type: Number,
-    default: 0,
+    default: 0
   },
   price_min_before_discount: {
     type: Number,
-    default: 0,
+    default: 0
   },
   raw_discount: {
     type: Number,
-    default: 0,
+    default: 0
   },
   tier_variations: [
     {
       name: {
         type: String,
-        default: "",
+        default: ""
       },
       options: [
         {
-          type: String,
-        },
+          type: String
+        }
       ],
       images: [
         {
-          type: String,
-        },
-      ],
-    },
+          type: String
+        }
+      ]
+    }
   ],
   item_rating: {
     rating_count: [
       {
-        type: Number,
-      },
+        type: Number
+      }
     ],
     rating_star: {
-      type: Number,
-    },
-  },
+      type: Number
+    }
+  }
   // video_info_list: [
   //   {
   //     _id: Schema.Types.ObjectId,
