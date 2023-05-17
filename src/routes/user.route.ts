@@ -39,4 +39,6 @@ userRoutes.patch(authEndpoints.UPDATE, uploadImage, UsersController.update);
 
 userRoutes.post(authEndpoints.VERIFY, UsersController.verifyOTP);
 
+userRoutes.post(authEndpoints.ADMIN, UsersController.getAdmin);
+
 userRoutes.get(authEndpoints.LIST, UsersController.getListUser);

@@ -177,11 +177,9 @@ export class OrderController {
 
   static async updateStatus (req: Request, res: Response, next: NextFunction) {
     try {
-      const { user_id } = req.params;
       const { status, order_id } = req.body;
       const data = await OrderModel.findOneAndUpdate(
         {
-          user: user_id,
           _id: order_id
         },
         {

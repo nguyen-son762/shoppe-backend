@@ -10,7 +10,8 @@ export const authEndpoints = {
   REGISTER_BY_PHONE_NUMBER: "/register/phone",
   LIKED: "/liked",
   TOTAL: "/total",
-  LIST: "/list"
+  LIST: "/list",
+  ADMIN:'/admin/login'
 };
 
 export const productEndpoints = {
@@ -28,5 +29,5 @@ export const orderEndpoints = {
   CREATE: "/create",
   PURCHASE: "/purchase",
   GET_STATUS: "/status/:user_id",
-  UPDATE: "/status/:user_id"
+  UPDATE: "/status"
 };

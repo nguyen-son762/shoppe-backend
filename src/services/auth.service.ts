@@ -33,7 +33,7 @@ export class UserService {
     return newUser;
   }
 
-  static async login (user: UserDef) {
+  static async login (user: Partial<UserDef>) {
     const userDb = await UserModel.findOne({
       phone_number: user.phone_number
     });
@@ -42,6 +42,20 @@ export class UserService {
     }
     const isSamePassword = await comparePassword(user.password, userDb.password);
     if (isSamePassword) {
+      return userDb;
+    }
+    throw new HttpException(HttpStatus.BAD_REQUEST, ERROR_MSG.USER_NOT_FOUND);
+  }
+
+  static async loginWithAdmin (user: Partial<UserDef>) {
+    const userDb = await UserModel.findOne({
+      username: user.username
+    });
+    if (!userDb) {
+      throw new HttpException(HttpStatus.BAD_REQUEST, ERROR_MSG.USER_NOT_FOUND);
+    }
+    const isSamePassword = await comparePassword(user.password, userDb.password);
+    if (isSamePassword && userDb.role === 'admin') {
       return userDb;
     }
     throw new HttpException(HttpStatus.BAD_REQUEST, ERROR_MSG.USER_NOT_FOUND);

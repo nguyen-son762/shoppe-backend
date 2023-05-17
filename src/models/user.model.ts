@@ -24,6 +24,7 @@ export interface UserDef {
   liked?: {
     product: string;
   }[];
+  role: string
 }
 
 const userSchema = new Schema<UserDef>({
@@ -100,7 +101,11 @@ const userSchema = new Schema<UserDef>({
         default: null
       }
     }
-  ]
+  ],
+  role: {
+    type: String,
+    default: 'user'
+  }
 });
 
 export const UserModel = model<UserDef>("User", userSchema);

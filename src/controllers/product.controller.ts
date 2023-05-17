@@ -67,6 +67,7 @@ export class ProductController {
           })
           .skip((page - 1) * limit)
           .limit(limit);
+        console.warn('products',products)
       }
       const total = await ProductModel.countDocuments(querySearch);
       return res.status(HttpStatus.OK).json({

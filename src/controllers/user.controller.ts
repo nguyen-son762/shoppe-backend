@@ -38,7 +38,8 @@ export class UsersController {
         phone_number,
         password,
         otp,
-        active: false
+        active: false,
+        role: 'user'
       });
       const result: UserResponseDef = {
         data: newUser,
@@ -71,7 +72,8 @@ export class UsersController {
         phone_number,
         password,
         otp,
-        active: true
+        active: true,
+        role: 'user'
       });
       const result: UserResponseDef = {
         data: newUser,
@@ -265,6 +267,19 @@ export class UsersController {
         total
       });
     } catch (err) {
+      return throwError(next, err?.status || err?.http_code, err?.message);
+    }
+  }
+
+  static async getAdmin(req: Request, res: Response, next: NextFunction){
+    try{
+      const {username, password} = req.body
+      const user = await UserService.loginWithAdmin({ username, password });
+      return res.status(HttpStatus.OK).json({
+        data:user
+      })
+    }
+    catch(err){
       return throwError(next, err?.status || err?.http_code, err?.message);
     }
   }
