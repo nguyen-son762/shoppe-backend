@@ -73,3 +73,5 @@ app.use(errorMiddleware);
 app.listen(port, () => {
   console.log("app is listening in port", port);
 });
+
+export default app
